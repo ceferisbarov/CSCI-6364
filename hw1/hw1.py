@@ -60,7 +60,17 @@ def MSE(Y_hat, Y):
 
 def train_test_spit(X, Y, train_ratio):
 	"""
-	A basic implementation of train-test split without scikit-lern.
+	A basic implementation of train-test split without scikit-learn.
+	Inputs:
+        X: The feature matrix (input data). shape: [n]
+        Y: The target labels. shape: [n]
+        train_ratio: The ratio of data to be used for training (e.g., 0.8 for 80% training data).
+    
+    Output:
+        X_train: Training feature data. shape: [train_count]
+        X_test:  Testing feature data. shape: [test_count]
+        Y_train: Training labels. shape: [train_count]
+        Y_test:  Testing labels. shape: [test_count]
 	"""
 	indices = list(range(X.shape[0]))
 	random.Random(3).shuffle(indices)
@@ -78,13 +88,21 @@ def train_test_spit(X, Y, train_ratio):
 def X_to_design_matrix(X):
 	"""
 	Adds vector of 1s to matrix X for the bias term.
-	"""
+	Inputs:
+        X: A 1D array of feature values. shape: [n]
+
+    Output:
+        A design matrix with a column of ones added. shape: [n x 2]
+    """
 	X = X.reshape(-1,1)
 	ones_column = np.ones((X.shape[0], 1))
 	design_matrix = np.concatenate((X, ones_column), axis=1)
 
 	return design_matrix
 
+# ==========================================
+# 				Load the data
+# ==========================================
 X = np.load('X.npy')
 Y = np.load('Y.npy')
 
@@ -99,12 +117,13 @@ X_test_tilda = X_to_design_matrix(X_test)
 W = solve(X_train_tilda, Y_train)
 train_loss = MSE(np.dot(X_train_tilda, W), Y_train)
 test_loss = MSE(np.dot(X_test_tilda, W), Y_test)
-
 print(MSE(np.dot(X_train_tilda, W), Y_train))
 print(MSE(np.dot(X_test_tilda, W), Y_test))
+print("*******************************")
 
 plot_data_and_model(X_train, X_train_tilda, Y_train, W, "Train data")
 plot_data_and_model(X_test, X_test_tilda, Y_test, W, "Test data")
+
 # ==========================================
 # 					PART B
 # ==========================================
@@ -115,8 +134,11 @@ W = solve(X_train_tilda, Y_train)
 print(MSE(np.dot(X_train_tilda, W), Y_train))
 print(MSE(np.dot(X_test_tilda, W), Y_test))
 
-plot_data_and_model(X_train, X_train_tilda, Y_train, W, "Train data")
-plot_data_and_model(X_test, X_test_tilda, Y_test, W, "Test data")
+sorted_ids = np.argsort(X_train)
+plot_data_and_model(X_train[sorted_ids], X_train_tilda[sorted_ids], Y_train[sorted_ids], W, "Train data")
+
+sorted_ids = np.argsort(X_test)
+plot_data_and_model(X_test[sorted_ids], X_test_tilda[sorted_ids], Y_test[sorted_ids], W, "Test data")
 plt.figure()
 
 # k = 1:15
